@@ -7,18 +7,18 @@ namespace Marketplace.Api
     [Route("/ad")]
     public class ClassifiedAdsCommandsApi : Controller
     {
-        private readonly ClassifiedAdsApplicationService 
+        private readonly IApplicationService
             _applicationService;
 
         public ClassifiedAdsCommandsApi(
-            ClassifiedAdsApplicationService applicationService
+            IApplicationService applicationService
         )
             => _applicationService = applicationService;
 
         [HttpPost]
         public async Task<IActionResult> Post(V1.Create request)
         {
-            await _applicationService.Handle(request);
+            await _applicationService.Create(request);
             return Ok();
         }
 
@@ -26,7 +26,7 @@ namespace Marketplace.Api
         [HttpPut]
         public async Task<IActionResult> Put(V1.SetTitle request)
         {
-            await _applicationService.Handle(request);
+            await _applicationService.SetTitle(request);
             return Ok();
         }
 
@@ -34,7 +34,7 @@ namespace Marketplace.Api
         [HttpPut]
         public async Task<IActionResult> Put(V1.UpdateText request)
         {
-            await _applicationService.Handle(request);
+            await _applicationService.UpdateText(request);
             return Ok();
         }
 
@@ -42,7 +42,7 @@ namespace Marketplace.Api
         [HttpPut]
         public async Task<IActionResult> Put(V1.UpdatePrice request)
         {
-            await _applicationService.Handle(request);
+            await _applicationService.UpdatePrice(request);
             return Ok();
         }
 
@@ -50,7 +50,7 @@ namespace Marketplace.Api
         [HttpPut]
         public async Task<IActionResult> Put(V1.RequestToPublish request)
         {
-            await _applicationService.Handle(request);
+            await _applicationService.RequestToPublish(request);
             return Ok();
         }
     }
