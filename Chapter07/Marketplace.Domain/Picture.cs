@@ -27,14 +27,7 @@ namespace Marketplace.Domain
             }
         }
         
-        public void Resize(PictureSize newSize)
-            => Apply(new Events.ClassifiedAdPictureResized
-            {
-                PictureId = Id.Value,
-                ClassifiedAdId = ParentId.Value,
-                Height = newSize.Width,
-                Width = newSize.Width
-            });
+
 
         public Picture(Action<object> applier) : base(applier)
         {

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Marketplace.Domain;
 using Xunit;
 
@@ -23,7 +24,10 @@ namespace Marketplace.Tests
             _classifiedAd.UpdatePrice(
                 Price.FromDecimal(100.10m, "EUR", new FakeCurrencyLookup()));
             _classifiedAd.AddPicture(new Uri("http://localhost/storage/123.jpg"), new PictureSize(1200, 620));
-            
+
+            _classifiedAd.ResizePicture(_classifiedAd.Pictures.First().Id, new PictureSize(1300, 720));
+
+
             _classifiedAd.RequestToPublish();
 
             Assert.Equal(ClassifiedAd.ClassifiedAdState.PendingReview,

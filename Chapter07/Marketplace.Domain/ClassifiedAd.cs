@@ -7,15 +7,13 @@ namespace Marketplace.Domain
 {
     public class ClassifiedAd : AggregateRoot<ClassifiedAdId>
     {
-        private string _databaseId { get; set; }
-
-        public UserId OwnerId { get; private set; }
-        public ClassifiedAdTitle Title { get; private set; }
-        public ClassifiedAdText Text { get; private set; }
-        public Price Price { get; private set; }
-        public ClassifiedAdState State { get; private set; }
-        public UserId ApprovedBy { get; private set; }
-        public List<Picture> Pictures { get; private set; }
+        public enum ClassifiedAdState
+        {
+            PendingReview,
+            Active,
+            Inactive,
+            MarkedAsSold
+        }
 
         public ClassifiedAd(ClassifiedAdId id, UserId ownerId)
         {
@@ -29,7 +27,21 @@ namespace Marketplace.Domain
             );
         }
 
-        public void SetTitle(ClassifiedAdTitle title) =>
+        private string _databaseId { get; set; }
+
+        public UserId OwnerId { get; private set; }
+        public ClassifiedAdTitle Title { get; private set; }
+        public ClassifiedAdText Text { get; private set; }
+        public Price Price { get; private set; }
+        public ClassifiedAdState State { get; private set; }
+        public UserId ApprovedBy { get; private set; }
+        public List<Picture> Pictures { get; }
+
+        private Picture FirstPicture
+            => Pictures.OrderBy(x => x.Order).FirstOrDefault();
+
+        public void SetTitle(ClassifiedAdTitle title)
+        {
             Apply(
                 new Events.ClassifiedAdTitleChanged
                 {
@@ -37,8 +49,10 @@ namespace Marketplace.Domain
                     Title = title
                 }
             );
+        }
 
-        public void UpdateText(ClassifiedAdText text) =>
+        public void UpdateText(ClassifiedAdText text)
+        {
             Apply(
                 new Events.ClassifiedAdTextUpdated
                 {
@@ -46,8 +60,10 @@ namespace Marketplace.Domain
                     AdText = text
                 }
             );
+        }
 
-        public void UpdatePrice(Price price) =>
+        public void UpdatePrice(Price price)
+        {
             Apply(
                 new Events.ClassifiedAdPriceUpdated
                 {
@@ -56,9 +72,12 @@ namespace Marketplace.Domain
                     CurrencyCode = price.Currency.CurrencyCode
                 }
             );
+        }
 
-        public void RequestToPublish() =>
+        public void RequestToPublish()
+        {
             Apply(new Events.ClassidiedAdSentForReview {Id = Id});
+        }
 
         public void AddPicture(Uri pictureUri, PictureSize size)
         {
@@ -75,9 +94,11 @@ namespace Marketplace.Domain
             );
 
             int NewPictureOrder()
-                => Pictures.Any()
+            {
+                return Pictures.Any()
                     ? Pictures.Max(x => x.Order) + 1
                     : 0;
+            }
         }
 
         public void ResizePicture(PictureId pictureId, PictureSize newSize)
@@ -87,8 +108,13 @@ namespace Marketplace.Domain
                 throw new InvalidOperationException(
                     "Cannot resize a picture that I don't have"
                 );
-
-            picture.Resize(newSize);
+            Apply(new Events.ClassifiedAdPictureResized
+            {
+                PictureId = pictureId.Value,
+                ClassifiedAdId = Id.Value,
+                Height = newSize.Height,
+                Width = newSize.Width
+            });
         }
 
         protected override void When(object @event)
@@ -129,17 +155,16 @@ namespace Marketplace.Domain
         }
 
         private Picture FindPicture(PictureId id)
-            => Pictures.FirstOrDefault(x => x.Id == id);
-
-        private Picture FirstPicture
-            => Pictures.OrderBy(x => x.Order).FirstOrDefault();
+        {
+            return Pictures.FirstOrDefault(x => x.Id == id);
+        }
 
         protected override void EnsureValidState()
         {
             var valid =
                 Id != null &&
                 OwnerId != null &&
-                (State switch
+                State switch
                 {
                     ClassifiedAdState.PendingReview =>
                         Title != null
@@ -153,18 +178,10 @@ namespace Marketplace.Domain
                         && FirstPicture.HasCorrectSize()
                         && ApprovedBy != null,
                     _ => true
-                });
+                };
 
             if (!valid)
                 throw new InvalidEntityStateException(this, $"Post-checks failed in state {State}");
-        }
-
-        public enum ClassifiedAdState
-        {
-            PendingReview,
-            Active,
-            Inactive,
-            MarkedAsSold
         }
     }
 }
