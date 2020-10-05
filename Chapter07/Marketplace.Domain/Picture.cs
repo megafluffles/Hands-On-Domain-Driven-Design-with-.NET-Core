@@ -1,6 +1,8 @@
 using System;
+using System.Runtime.CompilerServices;
 using Marketplace.Framework;
 
+[assembly: InternalsVisibleTo("Marketplace.Tests")]
 namespace Marketplace.Domain
 {
     public class Picture : Entity<PictureId>
@@ -27,7 +29,14 @@ namespace Marketplace.Domain
             }
         }
         
-
+        public void Resize(PictureSize newSize)
+            => Apply(new Events.ClassifiedAdPictureResized
+            {
+                PictureId = Id.Value,
+                ClassifiedAdId = ParentId.Value,
+                Height = newSize.Height,
+                Width = newSize.Width
+            });
 
         public Picture(Action<object> applier) : base(applier)
         {

@@ -32,7 +32,7 @@ namespace Marketplace.Tests
         public void FromString_and_FromDecimal_should_be_equal()
         {
             var firstAmount = Money.FromDecimal(5, "EUR", CurrencyLookup);
-            var secondAmount = Money.FromString("5.00", "EUR", CurrencyLookup);
+            var secondAmount = Money.FromString("5,00", "EUR", CurrencyLookup);
 
             Assert.Equal(firstAmount, secondAmount);
         }
