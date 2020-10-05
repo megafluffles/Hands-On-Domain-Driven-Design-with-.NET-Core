@@ -1,6 +1,8 @@
 using System;
+using System.Runtime.CompilerServices;
 using Marketplace.Framework;
 
+[assembly: InternalsVisibleTo("Marketplace.Tests")]
 namespace Marketplace.Domain
 {
     public class Picture : Entity<PictureId>
@@ -32,7 +34,7 @@ namespace Marketplace.Domain
             {
                 PictureId = Id.Value,
                 ClassifiedAdId = ParentId.Value,
-                Height = newSize.Width,
+                Height = newSize.Height,
                 Width = newSize.Width
             });
 

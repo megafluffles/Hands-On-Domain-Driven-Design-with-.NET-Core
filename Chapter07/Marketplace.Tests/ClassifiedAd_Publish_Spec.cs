@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Marketplace.Domain;
 using Xunit;
 
@@ -68,6 +69,76 @@ namespace Marketplace.Tests
                 Price.FromDecimal(0.0m, "EUR", new FakeCurrencyLookup()));
             
             Assert.Throws<InvalidEntityStateException>(() => _classifiedAd.RequestToPublish());
+        }
+
+        [Fact]
+        public void Can_resize_picture()
+        {
+            // Arrange
+            _classifiedAd.AddPicture(new Uri("http://localhost/storage/123.jpg"), new PictureSize(1200, 620));
+            //_classifiedAd.ClearChanges();
+            var sut = _classifiedAd.Pictures.First();
+            var expected  = new PictureSize(1100, 600);
+
+            // Act
+            sut.Resize(expected);
+            var actual =  sut.Size;
+
+            // Assert
+            Assert.Equal(expected, actual);
+        }
+
+        [Fact]
+        public void Resize_picture_in_classifiedAd_changed_list()
+        {
+            // Arrange
+            _classifiedAd.AddPicture(new Uri("http://localhost/storage/123.jpg"), new PictureSize(1200, 620));
+            _classifiedAd.ClearChanges();
+            var sut = _classifiedAd.Pictures.First();
+            var expected = new PictureSize(1100, 600);
+
+            // Act
+            sut.Resize(new PictureSize(1100, 600));
+            var actual = _classifiedAd.GetChanges();
+
+            // Assert
+            Assert.IsType<Events.ClassifiedAdPictureResized>(actual.First());
+           
+        }
+
+        [Fact]
+        public void Can_resize_picture_from_classifiedAd()
+        {
+            // Arrange
+            _classifiedAd.AddPicture(new Uri("http://localhost/storage/123.jpg"), new PictureSize(1200, 620));
+            //_classifiedAd.ClearChanges();
+            var sut = _classifiedAd.Pictures.First();
+            var expected = new PictureSize(1100, 600);
+
+            // Act
+            _classifiedAd.ResizePicture(sut.Id, new PictureSize(1100, 600));
+            var actual = sut.Size;
+
+            // Assert
+            Assert.Equal(expected, actual);
+        }
+
+        [Fact]
+        public void Resize_picture__from_classifiedAd_in_classifiedAd_changed_list()
+        {
+            // Arrange
+            _classifiedAd.AddPicture(new Uri("http://localhost/storage/123.jpg"), new PictureSize(1200, 620));
+            _classifiedAd.ClearChanges();
+            var sut = _classifiedAd.Pictures.First();
+            var expected = new PictureSize(1100, 600);
+
+            // Act
+            _classifiedAd.ResizePicture(sut.Id, new PictureSize(1100, 600));
+            var actual = _classifiedAd.GetChanges();
+
+            // Assert
+            Assert.IsType<Events.ClassifiedAdPictureResized>(actual.First());
+
         }
     }
 }
