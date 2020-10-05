@@ -51,5 +51,18 @@ namespace Marketplace.Domain
             public int Height { get; set; }
             public int Width { get; set; }
         }
+
+        // PictureNote
+        public class PictureNoteAddedToPicture
+        {
+            public Guid PictureId { get; set; }
+            public Guid PictureNoteId { get; set; }
+            public string Note { get; set; }
+        }
+
+        public class PictureNoteUpdated
+        {
+            public string Note { get; set; }
+        }
     }
 }

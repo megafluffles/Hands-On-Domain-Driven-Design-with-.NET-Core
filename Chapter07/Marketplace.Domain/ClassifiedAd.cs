@@ -60,6 +60,11 @@ namespace Marketplace.Domain
         public void RequestToPublish() =>
             Apply(new Events.ClassidiedAdSentForReview {Id = Id});
 
+        internal void UpdatePictureNote(PictureNoteId id, string v)
+        {
+            throw new NotImplementedException();
+        }
+
         public void AddPicture(Uri pictureUri, PictureSize size)
         {
             Apply(
@@ -78,6 +83,11 @@ namespace Marketplace.Domain
                 => Pictures.Any()
                     ? Pictures.Max(x => x.Order) + 1
                     : 0;
+        }
+
+        internal void AddPictureNote(PictureId id, string v)
+        {
+            throw new NotImplementedException();
         }
 
         public void ResizePicture(PictureId pictureId, PictureSize newSize)

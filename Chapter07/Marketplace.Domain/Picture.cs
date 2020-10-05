@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using Marketplace.Framework;
 
@@ -11,6 +12,7 @@ namespace Marketplace.Domain
         internal PictureSize Size { get; private set; }
         internal Uri Location { get; private set; }
         internal int Order { get; private set; }
+        public List<PictureNote> Notes { get; }
 
         protected override void When(object @event)
         {
@@ -40,6 +42,7 @@ namespace Marketplace.Domain
 
         public Picture(Action<object> applier) : base(applier)
         {
+            Notes = new List<PictureNote>();
         }
     }
 
