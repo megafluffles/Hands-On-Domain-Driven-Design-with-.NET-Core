@@ -84,7 +84,7 @@ namespace Marketplace.Tests
             var expected  = new PictureSize(1100, 600);
 
             // Act
-            sut.Resize(expected);
+            _classifiedAd.ResizePicture(sut.Id, expected);
             var actual =  sut.Size;
 
             // Assert
@@ -101,7 +101,7 @@ namespace Marketplace.Tests
             var expected = new PictureSize(1100, 600);
 
             // Act
-            sut.Resize(new PictureSize(1100, 600));
+            _classifiedAd.ResizePicture(sut.Id, new PictureSize(1100, 600));
             var actual = _classifiedAd.GetChanges();
 
             // Assert
