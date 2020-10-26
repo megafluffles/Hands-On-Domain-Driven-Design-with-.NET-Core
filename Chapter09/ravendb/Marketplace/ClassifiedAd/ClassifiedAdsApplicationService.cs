@@ -7,15 +7,15 @@ using static Marketplace.ClassifiedAd.Contracts;
 
 namespace Marketplace.ClassifiedAd
 {
-    public class ClassifiedAdsApplicationService 
+    public class ClassifiedAdsApplicationService
         : IApplicationService
     {
+        private readonly ICurrencyLookup _currencyLookup;
         private readonly IClassifiedAdRepository _repository;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly ICurrencyLookup _currencyLookup;
 
         public ClassifiedAdsApplicationService(
-            IClassifiedAdRepository repository, 
+            IClassifiedAdRepository repository,
             IUnitOfWork unitOfWork,
             ICurrencyLookup currencyLookup
         )
@@ -25,8 +25,9 @@ namespace Marketplace.ClassifiedAd
             _currencyLookup = currencyLookup;
         }
 
-        public Task Handle(object command) =>
-            command switch
+        public Task Handle(object command)
+        {
+            return command switch
             {
                 V1.Create cmd =>
                     HandleCreate(cmd),
@@ -58,6 +59,7 @@ namespace Marketplace.ClassifiedAd
                         new UserId(cmd.ApprovedBy))),
                 _ => Task.CompletedTask
             };
+        }
 
         private async Task HandleCreate(V1.Create cmd)
         {

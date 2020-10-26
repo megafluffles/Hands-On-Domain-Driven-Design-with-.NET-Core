@@ -1,5 +1,4 @@
 ﻿using System;
-using Marketplace.Domain;
 using Marketplace.Domain.ClassifiedAd;
 using Marketplace.Domain.Shared;
 using Xunit;
@@ -9,11 +8,11 @@ namespace Marketplace.Tests
     public class ClassifiedAd_Publish_Spec
     {
         private readonly ClassifiedAd _classifiedAd;
-        
+
         public ClassifiedAd_Publish_Spec()
         {
             _classifiedAd = new ClassifiedAd(
-                new ClassifiedAdId(Guid.NewGuid()), 
+                new ClassifiedAdId(Guid.NewGuid()),
                 new UserId(Guid.NewGuid()));
         }
 
@@ -25,7 +24,7 @@ namespace Marketplace.Tests
             _classifiedAd.UpdatePrice(
                 Price.FromDecimal(100.10m, "EUR", new FakeCurrencyLookup()));
             _classifiedAd.AddPicture(new Uri("http://localhost/storage/123.jpg"), new PictureSize(1200, 620));
-            
+
             _classifiedAd.RequestToPublish();
 
             Assert.Equal(ClassifiedAd.ClassifiedAdState.PendingReview,
@@ -38,7 +37,7 @@ namespace Marketplace.Tests
             _classifiedAd.UpdateText(ClassifiedAdText.FromString("Please buy my stuff"));
             _classifiedAd.UpdatePrice(
                 Price.FromDecimal(100.10m, "EUR", new FakeCurrencyLookup()));
-            
+
             Assert.Throws<DomainExceptions.InvalidEntityState>(() => _classifiedAd.RequestToPublish());
         }
 
@@ -48,7 +47,7 @@ namespace Marketplace.Tests
             _classifiedAd.SetTitle(ClassifiedAdTitle.FromString("Test ad"));
             _classifiedAd.UpdatePrice(
                 Price.FromDecimal(100.10m, "EUR", new FakeCurrencyLookup()));
-            
+
             Assert.Throws<DomainExceptions.InvalidEntityState>(() => _classifiedAd.RequestToPublish());
         }
 
@@ -57,7 +56,7 @@ namespace Marketplace.Tests
         {
             _classifiedAd.SetTitle(ClassifiedAdTitle.FromString("Test ad"));
             _classifiedAd.UpdateText(ClassifiedAdText.FromString("Please buy my stuff"));
-            
+
             Assert.Throws<DomainExceptions.InvalidEntityState>(() => _classifiedAd.RequestToPublish());
         }
 
@@ -68,7 +67,7 @@ namespace Marketplace.Tests
             _classifiedAd.UpdateText(ClassifiedAdText.FromString("Please buy my stuff"));
             _classifiedAd.UpdatePrice(
                 Price.FromDecimal(0.0m, "EUR", new FakeCurrencyLookup()));
-            
+
             Assert.Throws<DomainExceptions.InvalidEntityState>(() => _classifiedAd.RequestToPublish());
         }
     }

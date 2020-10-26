@@ -6,10 +6,18 @@ namespace Marketplace.Framework
         where TId : Value<TId>
     {
         private readonly Action<object> _applier;
-        
+
+        protected Entity(Action<object> applier)
+        {
+            _applier = applier;
+        }
+
         public TId Id { get; protected set; }
 
-        protected Entity(Action<object> applier) => _applier = applier;
+        void IInternalEventHandler.Handle(object @event)
+        {
+            When(@event);
+        }
 
         protected abstract void When(object @event);
 
@@ -18,7 +26,5 @@ namespace Marketplace.Framework
             When(@event);
             _applier(@event);
         }
-
-        void IInternalEventHandler.Handle(object @event) => When(@event);
     }
 }

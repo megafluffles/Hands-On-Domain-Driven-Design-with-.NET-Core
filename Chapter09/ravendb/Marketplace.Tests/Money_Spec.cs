@@ -1,5 +1,4 @@
 ﻿using System;
-using Marketplace.Domain;
 using Marketplace.Domain.Shared;
 using Xunit;
 
@@ -9,7 +8,7 @@ namespace Marketplace.Tests
     {
         private static readonly ICurrencyLookup CurrencyLookup =
             new FakeCurrencyLookup();
-        
+
         [Fact]
         public void Two_of_same_amount_should_be_equal()
         {
@@ -18,7 +17,7 @@ namespace Marketplace.Tests
 
             Assert.Equal(firstAmount, secondAmount);
         }
-        
+
         [Fact]
         public void Two_of_same_amount_but_different_Currencies_should_not_be_equal()
         {
@@ -44,9 +43,9 @@ namespace Marketplace.Tests
             var coin1 = Money.FromDecimal(1, "EUR", CurrencyLookup);
             var coin2 = Money.FromDecimal(2, "EUR", CurrencyLookup);
             var coin3 = Money.FromDecimal(2, "EUR", CurrencyLookup);
-            
+
             var banknote = Money.FromDecimal(5, "EUR", CurrencyLookup);
-            
+
             Assert.Equal(banknote, coin1 + coin2 + coin3);
         }
 
@@ -80,18 +79,18 @@ namespace Marketplace.Tests
             var firstAmount = Money.FromDecimal(5, "USD", CurrencyLookup);
             var secondAmount = Money.FromDecimal(5, "EUR", CurrencyLookup);
 
-            Assert.Throws<CurrencyMismatchException>(() => 
+            Assert.Throws<CurrencyMismatchException>(() =>
                 firstAmount + secondAmount
             );
         }
-        
+
         [Fact]
         public void Throws_on_substracting_different_currencies()
         {
             var firstAmount = Money.FromDecimal(5, "USD", CurrencyLookup);
             var secondAmount = Money.FromDecimal(5, "EUR", CurrencyLookup);
 
-            Assert.Throws<CurrencyMismatchException>(() => 
+            Assert.Throws<CurrencyMismatchException>(() =>
                 firstAmount - secondAmount
             );
         }

@@ -5,24 +5,16 @@ namespace Marketplace.Domain.Shared
 {
     public class Money : Value<Money>
     {
-        public static Money FromDecimal(decimal amount, string currency, 
-            ICurrencyLookup currencyLookup) =>
-            new Money(amount, currency, currencyLookup);
-
-        public static Money FromString(string amount, string currency,
-            ICurrencyLookup currencyLookup) =>
-            new Money(decimal.Parse(amount), currency, currencyLookup);
-
         protected Money(decimal amount, string currencyCode, ICurrencyLookup currencyLookup)
         {
             if (string.IsNullOrEmpty(currencyCode))
                 throw new ArgumentNullException(
                     nameof(currencyCode), "Currency code must be specified");
-            
+
             var currency = currencyLookup.FindCurrency(currencyCode);
             if (!currency.InUse)
                 throw new ArgumentException($"Currency {currencyCode} is not valid");
-            
+
             if (decimal.Round(amount, currency.DecimalPlaces) != amount)
                 throw new ArgumentOutOfRangeException(
                     nameof(amount),
@@ -38,8 +30,25 @@ namespace Marketplace.Domain.Shared
             Currency = currency;
         }
 
-        public decimal Amount { get; private set; }
-        public Currency Currency { get; private set; }
+        // Satisfy the serialization requirements
+        protected Money()
+        {
+        }
+
+        public decimal Amount { get; }
+        public Currency Currency { get; }
+
+        public static Money FromDecimal(decimal amount, string currency,
+            ICurrencyLookup currencyLookup)
+        {
+            return new Money(amount, currency, currencyLookup);
+        }
+
+        public static Money FromString(string amount, string currency,
+            ICurrencyLookup currencyLookup)
+        {
+            return new Money(decimal.Parse(amount), currency, currencyLookup);
+        }
 
         public Money Add(Money summand)
         {
@@ -59,16 +68,20 @@ namespace Marketplace.Domain.Shared
             return new Money(Amount - subtrahend.Amount, Currency);
         }
 
-        public static Money operator +(Money summand1, Money summand2) =>
-            summand1.Add(summand2);
+        public static Money operator +(Money summand1, Money summand2)
+        {
+            return summand1.Add(summand2);
+        }
 
-        public static Money operator -(Money minuend, Money subtrahend) =>
-            minuend.Subtract(subtrahend);
+        public static Money operator -(Money minuend, Money subtrahend)
+        {
+            return minuend.Subtract(subtrahend);
+        }
 
-        public override string ToString() => $"{Currency.CurrencyCode} {Amount}";
-        
-        // Satisfy the serialization requirements
-        protected Money() { }
+        public override string ToString()
+        {
+            return $"{Currency.CurrencyCode} {Amount}";
+        }
     }
 
     public class CurrencyMismatchException : Exception

@@ -23,19 +23,27 @@ namespace Marketplace.Framework
                 var thisValue = m.GetValue(this);
                 return m.IsNonStringEnumerable
                     ? GetEnumerableValues(otherValue).SequenceEqual(GetEnumerableValues(thisValue))
-                    : (otherValue?.Equals(thisValue) ?? thisValue == null);
+                    : otherValue?.Equals(thisValue) ?? thisValue == null;
             });
         }
 
-        public override int GetHashCode() =>
-            CombineHashCodes(
+        public override int GetHashCode()
+        {
+            return CombineHashCodes(
                 Members.Select(m => m.IsNonStringEnumerable
                     ? CombineHashCodes(GetEnumerableValues(m.GetValue(this)))
                     : m.GetValue(this)));
+        }
 
-        public static bool operator ==(Value<T> left, Value<T> right) => Equals(left, right);
+        public static bool operator ==(Value<T> left, Value<T> right)
+        {
+            return Equals(left, right);
+        }
 
-        public static bool operator !=(Value<T> left, Value<T> right) => !Equals(left, right);
+        public static bool operator !=(Value<T> left, Value<T> right)
+        {
+            return !Equals(left, right);
+        }
 
         public override string ToString()
         {

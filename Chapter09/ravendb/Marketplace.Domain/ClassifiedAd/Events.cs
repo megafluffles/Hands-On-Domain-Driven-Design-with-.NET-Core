@@ -1,5 +1,4 @@
 ﻿using System;
-using Marketplace.Domain.Shared;
 
 namespace Marketplace.Domain.ClassifiedAd
 {
@@ -50,7 +49,7 @@ namespace Marketplace.Domain.ClassifiedAd
             public int Width { get; set; }
             public int Order { get; set; }
         }
-        
+
         public class ClassifiedAdPictureResized
         {
             public Guid ClassifiedAdId { get; set; }

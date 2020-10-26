@@ -6,47 +6,60 @@ namespace Marketplace.Domain.UserProfile
 {
     public class UserProfile : AggregateRoot<UserId>
     {
-        // Properties to handle the persistence
-        private string DbId
-        {
-            get => $"UserProfile/{Id.Value}";
-            set {}
-        }
-        
-        // Aggregate state properties
-        public FullName FullName { get; private set; }
-        public DisplayName DisplayName { get; private set; }
-        public string PhotoUrl { get; private set; }
-
         public UserProfile(UserId id, FullName fullName, DisplayName displayName)
-            => Apply(new Events.UserRegistered
+        {
+            Apply(new Events.UserRegistered
             {
                 UserId = id,
                 FullName = fullName,
                 DisplayName = displayName
             });
+        }
+
+        // Satisfy the serialization requirements
+        protected UserProfile()
+        {
+        }
+
+        // Properties to handle the persistence
+        private string DbId
+        {
+            get => $"UserProfile/{Id.Value}";
+            set { }
+        }
+
+        // Aggregate state properties
+        public FullName FullName { get; private set; }
+        public DisplayName DisplayName { get; private set; }
+        public string PhotoUrl { get; private set; }
 
         public void UpdateFullName(FullName fullName)
-            => Apply(new Events.UserFullNameUpdated
+        {
+            Apply(new Events.UserFullNameUpdated
             {
                 UserId = Id,
                 FullName = fullName
             });
-        
+        }
+
         public void UpdateDisplayName(DisplayName displayName)
-            => Apply(new Events.UserDisplayNameUpdated
+        {
+            Apply(new Events.UserDisplayNameUpdated
             {
                 UserId = Id,
                 DisplayName = displayName
             });
-        
+        }
+
         public void UpdateProfilePhoto(Uri photoUrl)
-            => Apply(new Events.ProfilePhotoUploaded
+        {
+            Apply(new Events.ProfilePhotoUploaded
             {
                 UserId = Id,
                 PhotoUrl = photoUrl.ToString()
             });
-        
+        }
+
         protected override void When(object @event)
         {
             switch (@event)
@@ -68,9 +81,8 @@ namespace Marketplace.Domain.UserProfile
             }
         }
 
-        protected override void EnsureValidState() { }
-        
-        // Satisfy the serialization requirements
-        protected UserProfile() { }
+        protected override void EnsureValidState()
+        {
+        }
     }
 }

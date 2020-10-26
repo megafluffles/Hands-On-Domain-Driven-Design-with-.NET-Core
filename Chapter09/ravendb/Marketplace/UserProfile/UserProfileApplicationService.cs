@@ -9,9 +9,9 @@ namespace Marketplace.UserProfile
 {
     public class UserProfileApplicationService : IApplicationService
     {
+        private readonly CheckTextForProfanity _checkText;
         private readonly IUserProfileRepository _repository;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly CheckTextForProfanity _checkText;
 
         public UserProfileApplicationService(
             IUserProfileRepository repository, IUnitOfWork unitOfWork,
@@ -23,8 +23,9 @@ namespace Marketplace.UserProfile
             _checkText = checkText;
         }
 
-        public Task Handle(object command) =>
-            command switch
+        public Task Handle(object command)
+        {
+            return command switch
             {
                 V1.RegisterUser cmd =>
                     HandleCreate(cmd),
@@ -51,6 +52,7 @@ namespace Marketplace.UserProfile
                     ),
                 _ => Task.CompletedTask
             };
+        }
 
         private async Task HandleCreate(V1.RegisterUser cmd)
         {

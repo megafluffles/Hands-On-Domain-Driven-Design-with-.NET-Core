@@ -5,9 +5,6 @@ namespace Marketplace.Domain.ClassifiedAd
 {
     public class PictureSize : Value<PictureSize>
     {
-        public int Width { get; internal set; }
-        public int Height { get; internal set; }
-
         public PictureSize(int width, int height)
         {
             if (width <= 0)
@@ -24,6 +21,11 @@ namespace Marketplace.Domain.ClassifiedAd
             Height = height;
         }
 
-        internal PictureSize() { }
+        internal PictureSize()
+        {
+        }
+
+        public int Width { get; internal set; }
+        public int Height { get; internal set; }
     }
 }

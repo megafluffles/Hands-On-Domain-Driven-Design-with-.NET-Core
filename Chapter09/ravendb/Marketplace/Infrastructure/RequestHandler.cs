@@ -25,7 +25,7 @@ namespace Marketplace.Infrastructure
                 });
             }
         }
-        
+
         public static async Task<IActionResult> HandleQuery<TModel>(
             Func<Task<TModel>> query, ILogger log)
         {

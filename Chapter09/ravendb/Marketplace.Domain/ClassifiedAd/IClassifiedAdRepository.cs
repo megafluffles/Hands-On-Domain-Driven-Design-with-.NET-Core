@@ -7,7 +7,7 @@ namespace Marketplace.Domain.ClassifiedAd
         Task<ClassifiedAd> Load(ClassifiedAdId id);
 
         Task Add(ClassifiedAd entity);
-        
+
         Task<bool> Exists(ClassifiedAdId id);
     }
 }

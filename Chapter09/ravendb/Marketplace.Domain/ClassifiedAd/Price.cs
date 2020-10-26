@@ -15,15 +15,19 @@ namespace Marketplace.Domain.ClassifiedAd
         }
 
         internal Price(decimal amount, string currencyCode)
-            : base(amount, new Currency{CurrencyCode = currencyCode})
+            : base(amount, new Currency {CurrencyCode = currencyCode})
+        {
+        }
+
+        // Satisfy the serialization requirements
+        protected Price()
         {
         }
 
         public new static Price FromDecimal(decimal amount, string currency,
-            ICurrencyLookup currencyLookup) =>
-            new Price(amount, currency, currencyLookup);
-        
-        // Satisfy the serialization requirements
-        protected Price() { }
+            ICurrencyLookup currencyLookup)
+        {
+            return new Price(amount, currency, currencyLookup);
+        }
     }
 }

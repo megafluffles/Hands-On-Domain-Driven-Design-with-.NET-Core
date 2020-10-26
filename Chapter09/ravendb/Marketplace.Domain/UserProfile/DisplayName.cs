@@ -6,9 +6,17 @@ namespace Marketplace.Domain.UserProfile
 {
     public class DisplayName : Value<DisplayName>
     {
-        public string Value { get; private set; }
+        internal DisplayName(string displayName)
+        {
+            Value = displayName;
+        }
 
-        internal DisplayName(string displayName) => Value = displayName;
+        // Satisfy the serialization requirements
+        protected DisplayName()
+        {
+        }
+
+        public string Value { get; }
 
         public static DisplayName FromString(
             string displayName,
@@ -16,7 +24,7 @@ namespace Marketplace.Domain.UserProfile
         {
             if (displayName.IsEmpty())
                 throw new ArgumentNullException(nameof(FullName));
-            
+
             if (hasProfanity(displayName))
                 throw new DomainExceptions.ProfanityFound(displayName);
 
@@ -24,9 +32,8 @@ namespace Marketplace.Domain.UserProfile
         }
 
         public static implicit operator string(DisplayName displayName)
-            => displayName.Value;
-        
-        // Satisfy the serialization requirements
-        protected DisplayName() { }
+        {
+            return displayName.Value;
+        }
     }
 }

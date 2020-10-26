@@ -9,8 +9,10 @@ namespace Marketplace
 {
     public static class Program
     {
-        static Program() =>
+        static Program()
+        {
             CurrentDirectory = Path.GetDirectoryName(GetEntryAssembly().Location);
+        }
 
         public static void Main(string[] args)
         {
@@ -25,16 +27,20 @@ namespace Marketplace
         }
 
         private static IConfiguration BuildConfiguration(string[] args)
-            => new ConfigurationBuilder()
+        {
+            return new ConfigurationBuilder()
                 .SetBasePath(CurrentDirectory)
                 .Build();
+        }
 
         private static IWebHostBuilder ConfigureWebHost(
             IConfiguration configuration)
-            => new WebHostBuilder()
+        {
+            return new WebHostBuilder()
                 .UseStartup<Startup>()
                 .UseConfiguration(configuration)
                 .UseContentRoot(CurrentDirectory)
                 .UseKestrel();
+        }
     }
 }
