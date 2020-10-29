@@ -1,0 +1,7 @@
+{
+  "License.Eula.Accepted": true,
+  "Setup.Mode": "None",
+  "Security.UnsecuredAccessAllowed": "PublicNetwork",
+  "BindPort": "8080",
+  "DataDir": "/var/lib/ravendb/"
+}

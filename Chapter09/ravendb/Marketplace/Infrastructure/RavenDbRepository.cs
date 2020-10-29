@@ -30,9 +30,9 @@ namespace Marketplace.Infrastructure
             return _session.Advanced.ExistsAsync(_entityId(id));
         }
 
-        public Task<T> Load(TId id)
+        public async Task<T> Load(TId id)
         {
-            return _session.LoadAsync<T>(_entityId(id));
+            return await _session.LoadAsync<T>(_entityId(id));
         }
     }
 }
