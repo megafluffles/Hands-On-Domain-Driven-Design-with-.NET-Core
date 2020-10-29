@@ -31,7 +31,7 @@ namespace Marketplace
         {
             var esConnection = EventStoreConnection.Create(
                 Configuration["eventStore:connectionString"],
-                ConnectionSettings.Create().KeepReconnecting(),
+                ConnectionSettings.Create().DisableTls().KeepReconnecting(),
                 Environment.ApplicationName);
             var store = new EsAggregateStore(esConnection);
             var purgomalumClient = new PurgomalumClient();
