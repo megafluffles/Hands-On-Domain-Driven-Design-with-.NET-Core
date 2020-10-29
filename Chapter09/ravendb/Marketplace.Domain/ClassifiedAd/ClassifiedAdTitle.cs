@@ -16,7 +16,7 @@ namespace Marketplace.Domain.ClassifiedAd
         {
         }
 
-        public string Value { get; }
+        public string Value { get; private set; }
 
         public static ClassifiedAdTitle FromString(string title)
         {

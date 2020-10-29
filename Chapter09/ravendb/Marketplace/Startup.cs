@@ -10,7 +10,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
+using Newtonsoft.Json;
 using Raven.Client.Documents;
+using Raven.Client.Json.Serialization.NewtonsoftJson;
 
 // ReSharper disable UnusedMember.Global
 
@@ -29,13 +31,16 @@ namespace Marketplace
 
         public void ConfigureServices(IServiceCollection services)
         {
+            JsonConvert.DefaultSettings = () => new JsonSerializerSettings
+                {NullValueHandling = NullValueHandling.Ignore};
+
             var store = new DocumentStore
             {
                 Urls = new[] {"http://localhost:8080"},
                 Database = "Marketplace_Chapter9",
                 Conventions =
                 {
-                    FindIdentityProperty = x => x.Name == "DbId"
+                    FindIdentityProperty = x => x.Name == "DbId"//, Serialization = new NewtonsoftJsonSerializationConventions()
                 }
             };
             store.Initialize();
