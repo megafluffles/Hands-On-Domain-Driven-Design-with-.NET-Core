@@ -14,3 +14,9 @@ services:
       - EVENTSTORE_EXT_TCP_PORT=1113
       - EVENTSTORE_INSECURE=true
       - EVENTSTORE_ENABLE_EXTERNAL_TCP=true
+      - EVENTSTORE_LOG=/var/log/eventstore
+      - EVENTSTORE_DB=/var/data/eventstore
+    volumes:
+      - c:/DockerVolumes/eventstore/data:/var/data/eventstore
+      - c:/DockerVolumes/eventstore/logs:/var/log/eventstore
+   

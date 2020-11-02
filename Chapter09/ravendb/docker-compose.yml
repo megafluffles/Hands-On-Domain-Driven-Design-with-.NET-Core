@@ -10,5 +10,5 @@ services:
     environment:
       - RAVEN_ARGS="--config-path=/opt/RavenDB/config/settings.default.json"
     volumes:
-      - c:/ravendb/config:/opt/RavenDB/config
-      - c:/ravendb/data:/var/lib/ravendb/
+      - c:/DockerVolumes/RavenDB/config:/opt/RavenDB/config
+      - c:/DockerVolumes/RavenDB/data:/var/lib/ravendb/
