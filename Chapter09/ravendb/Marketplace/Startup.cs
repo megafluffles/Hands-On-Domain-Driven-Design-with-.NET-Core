@@ -13,6 +13,7 @@ using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using Raven.Client.Documents;
 using Raven.Client.Json.Serialization.NewtonsoftJson;
+using SisoDb.JsonNet;
 
 // ReSharper disable UnusedMember.Global
 
