@@ -69,6 +69,11 @@ namespace Marketplace
                         Version = "v1"
                     });
             });
+
+            JsonConvert.DefaultSettings = () => new JsonSerializerSettings
+            {
+                ContractResolver = new PrivateSetterContractResolver()
+            };
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

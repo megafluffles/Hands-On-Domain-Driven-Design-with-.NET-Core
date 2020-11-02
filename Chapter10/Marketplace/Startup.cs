@@ -9,6 +9,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using Newtonsoft.Json;
+using SisoDb.JsonNet;
 using Swashbuckle.AspNetCore.Swagger;
 using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
@@ -55,6 +57,10 @@ namespace Marketplace
                         Version = "v1"
                     });
             });
+            
+            JsonConvert.DefaultSettings = () => new JsonSerializerSettings{
+                ContractResolver = new PrivateSetterContractResolver()
+            };
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

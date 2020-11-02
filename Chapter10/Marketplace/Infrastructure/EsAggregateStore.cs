@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using EventStore.ClientAPI;
 using Marketplace.Framework;
 using Newtonsoft.Json;
+using SisoDb.JsonNet;
 
 namespace Marketplace.Infrastructure
 {
@@ -55,6 +56,8 @@ namespace Marketplace.Infrastructure
             var page = await _connection.ReadStreamEventsForwardAsync(
                 stream, 0, 1024, false);
 
+
+            
             aggregate.Load(page.Events.Select(resolvedEvent =>
             {
                 var meta = JsonConvert.DeserializeObject<EventMetadata>(
@@ -90,4 +93,5 @@ namespace Marketplace.Infrastructure
             public string ClrType { get; set; }
         }
     }
+    
 }
