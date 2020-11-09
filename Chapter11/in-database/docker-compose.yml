@@ -2,13 +2,36 @@ version: '3.5'
 
 services:
 
+  eventstore:
+    container_name: marketplace-eventstore
+    image: eventstore/eventstore
+    ports:
+        - 2113:2113
+        - 1112:1112
+        - 1113:1113
+    environment:
+      - EVENTSTORE_EXT_HTTP_PORT=2113
+      - EVENTSTORE_EXT_TCP_PORT=1113
+      - EVENTSTORE_INSECURE=true
+      - EVENTSTORE_ENABLE_EXTERNAL_TCP=true
+      - EVENTSTORE_LOG=/var/log/eventstore
+      - EVENTSTORE_DB=/var/data/eventstore
+    volumes:
+      - c:/DockerVolumes/eventstore/data:/var/data/eventstore
+      - c:/DockerVolumes/eventstore/logs:/var/log/eventstore
+   
   ravendb:
-    container_name: marketplace-ch9-ravendb
+    container_name: marketplace-ch11-ravendb
     image: ravendb/ravendb
     ports:
       - 8080:8080
     environment:
-      - RAVEN_ARGS="--config-path=/opt/RavenDB/config/settings.default.json"
+      - RAVEN_License_Eula_Accepted=true
+      - RAVEN_Setup_Mode=None
+      - RAVEN_Security_UnsecuredAccessAllowed=PublicNetwork
+      - RAVEN_BindPort=8080
+      - RAVEN_DataDir=/var/lib/ravendb/
+
     volumes:
       - c:/DockerVolumes/RavenDB/config:/opt/RavenDB/config
       - c:/DockerVolumes/RavenDB/data:/var/lib/ravendb/
