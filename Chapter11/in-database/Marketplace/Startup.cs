@@ -11,12 +11,15 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi.Models;
+using Newtonsoft.Json;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Session;
 using Raven.Client.ServerWide;
 using Raven.Client.ServerWide.Operations;
+using SisoDb.JsonNet;
 using Swashbuckle.AspNetCore.Swagger;
-using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
+using IWebHostEnvironment = Microsoft.AspNetCore.Hosting.IWebHostEnvironment;
 
 // ReSharper disable UnusedMember.Global
 
@@ -24,14 +27,14 @@ namespace Marketplace
 {
     public class Startup
     {
-        public Startup(IHostingEnvironment environment, IConfiguration configuration)
+        public Startup(IWebHostEnvironment environment, IConfiguration configuration)
         {
             Environment = environment;
             Configuration = configuration;
         }
 
         private IConfiguration Configuration { get; }
-        private IHostingEnvironment Environment { get; }
+        private IWebHostEnvironment Environment { get; }
 
         public void ConfigureServices(IServiceCollection services)
         {
@@ -66,29 +69,39 @@ namespace Marketplace
             services.AddSingleton<IHostedService>(
                 new EventStoreService(esConnection, projectionManager));
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddControllersWithViews();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1",
-                    new Info
+                    new OpenApiInfo
                     {
                         Title = "ClassifiedAds",
                         Version = "v1"
                     });
             });
+
+            JsonConvert.DefaultSettings = () => new JsonSerializerSettings
+            {
+                ContractResolver = new PrivateSetterContractResolver()
+            };
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseMvcWithDefaultRoute();
             app.UseSwagger();
             app.UseSwaggerUI(c =>
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "ClassifiedAds v1"));
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "ClassifiedAds v1");
+                c.RoutePrefix = string.Empty;
+            });
+
+            app.UseRouting();
+            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }
 
         private static IDocumentStore ConfigureRavenDb(IConfiguration configuration)
