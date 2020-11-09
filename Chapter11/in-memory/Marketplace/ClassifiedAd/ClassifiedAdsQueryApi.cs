@@ -18,6 +18,6 @@ namespace Marketplace.ClassifiedAd
 
         [HttpGet]
         public IActionResult Get(QueryModels.GetPublicClassifiedAd request)
-            => RequestHandler.HandleQuery(() => _items.Query(request), _log);
+            => Ok(RequestHandler.HandleQuery(() => _items.Query(request), _log));
     }
 }

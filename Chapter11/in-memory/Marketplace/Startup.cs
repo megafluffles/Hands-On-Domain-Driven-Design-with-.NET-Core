@@ -2,22 +2,18 @@
 using System.Linq;
 using EventStore.ClientAPI;
 using Marketplace.ClassifiedAd;
-using Marketplace.Domain;
 using Marketplace.Framework;
 using Marketplace.Infrastructure;
 using Marketplace.Projections;
 using Marketplace.UserProfile;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
-using SisoDb.JsonNet;
-using Swashbuckle.AspNetCore.Swagger;
-using IWebHostEnvironment = Microsoft.AspNetCore.Hosting.IWebHostEnvironment;
+using Newtonsoft.Json.Serialization;
 
 // ReSharper disable UnusedMember.Global
 
@@ -38,7 +34,7 @@ namespace Marketplace
         {
             var esConnection = EventStoreConnection.Create(
                 Configuration["eventStore:connectionString"],
-                ConnectionSettings.Create().KeepReconnecting(),
+                ConnectionSettings.Create().DisableTls().KeepReconnecting(),
                 Environment.ApplicationName);
             var store = new EsAggregateStore(esConnection);
             var purgomalumClient = new PurgomalumClient();
@@ -55,20 +51,18 @@ namespace Marketplace
             services.AddSingleton<IEnumerable<ReadModels.ClassifiedAdDetails>>(classifiedAdDetails);
             var userDetails = new List<ReadModels.UserDetails>();
             services.AddSingleton<IEnumerable<ReadModels.UserDetails>>(userDetails);
-            
-            var projectionManager = new ProjectionManager(esConnection, 
-                new ClassifiedAdDetailsProjection(classifiedAdDetails, 
+
+            var projectionManager = new ProjectionManager(esConnection,
+                new ClassifiedAdDetailsProjection(classifiedAdDetails,
                     userId => userDetails.FirstOrDefault(x => x.UserId == userId)?.DisplayName),
                 new UserDetailsProjection(userDetails),
                 new ClassifiedAdUpcasters(esConnection,
                     userId => userDetails.FirstOrDefault(x => x.UserId == userId)?.PhotoUrl));
-            
+
             services.AddSingleton<IHostedService>(
                 new EventStoreService(esConnection, projectionManager));
 
-            services.AddControllersWithViews();
-
-
+            services.AddMvc();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1",
@@ -87,11 +81,7 @@ namespace Marketplace
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-
+            app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "ClassifiedAds v1");

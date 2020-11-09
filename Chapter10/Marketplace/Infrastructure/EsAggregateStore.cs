@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using EventStore.ClientAPI;
 using Marketplace.Framework;
 using Newtonsoft.Json;
-using SisoDb.JsonNet;
 
 namespace Marketplace.Infrastructure
 {
